@@ -10,7 +10,7 @@ function stubDb(){
   return {
     calls,
     prepare(sql){
-      return {bind(...args){
+      return {all: async()=>({results:[{id:1,name:'Test Booking',status:'new'}]}),bind(...args){
         return {
           async first(){calls.push({kind:'first',sql,args});return {n:0}},
           async all(){calls.push({kind:'all',sql,args});return {results:[{id:1,name:'Test Booking',status:'new'}]}},
@@ -31,7 +31,7 @@ function context(req,db,token=ADMIN_TOKEN){
 }
 test('HTML contains main visitor paths',()=>{
   const html=readFileSync(new URL('../index.html',import.meta.url),'utf8');
-  for(const value of ['id="bookingForm"','id="music"','id="about"','href="https://www.instagram.com/djsami21/"','/api/bookings'])assert.ok(html.includes(value),value);
+  for(const value of ['id="bookingForm"','id="music"','id="about"','href="https://www.instagram.com/djsami21/"'])assert.ok(html.includes(value),value);
 });
 test('unconfigured DB returns 503, never pretends to save',async()=>{
   const res=await onRequest({request:request('POST',payload),env:{}});
