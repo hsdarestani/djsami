@@ -69,7 +69,9 @@
   var currentDate = new Date();
   var localNow = new Date(currentDate.getTime() - currentDate.getTimezoneOffset()*60000);
   dateInput.min = localNow.toISOString().slice(0,10);
-  dateInput.max = String(currentDate.getFullYear()+2) + '-12-31';
+  var latestDate = new Date(currentDate);
+  latestDate.setFullYear(latestDate.getFullYear()+2);
+  dateInput.max = new Date(latestDate.getTime()-latestDate.getTimezoneOffset()*60000).toISOString().slice(0,10);
   function setLanguage(lang) {
     language = lang;
     localStorage.setItem('djSamiLanguage',lang);
