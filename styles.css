@@ -105,3 +105,46 @@ footer p{margin-top:16px;font-size:11px;color:#849b8c}
  .short-about{padding:17px 15px}
 }
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.action,.link-card,.send-button{transition:none}}
+
+/* Deutscher Buchungskalender: gleiche Gestaltung auf Desktop und Mobilgeräten. */
+.form-grid input.flatpickr-input,
+.form-grid input.flatpickr-alt-input{
+  min-height:51px;
+  color:#19231d;
+  background:#fff;
+  border:1px solid #ccd4c9;
+  border-radius:10px;
+  font-size:16px;
+  font-variant-numeric:tabular-nums;
+  letter-spacing:.025em;
+  cursor:pointer;
+}
+.form-grid input.flatpickr-alt-input:focus{
+  border-color:#657a40;
+  box-shadow:0 0 0 2px rgba(92,116,51,.16);
+}
+.flatpickr-calendar{
+  font-family:var(--body);
+  border:1px solid #d7dfd3;
+  border-radius:18px;
+  box-shadow:0 22px 48px rgba(9,25,16,.21);
+  overflow:hidden;
+  z-index:9999;
+}
+.flatpickr-calendar::before,.flatpickr-calendar::after{display:none}
+.flatpickr-months{background:#eff5e7;padding:5px 4px}
+.flatpickr-current-month,.flatpickr-current-month .flatpickr-monthDropdown-months,.flatpickr-current-month input.cur-year{font-family:var(--body);font-weight:800;color:#1f3323}
+.flatpickr-weekdays{background:#eff5e7}
+span.flatpickr-weekday{background:#eff5e7;color:#4b644c;font-size:12px}
+.flatpickr-day{font-weight:650;color:#203025}
+.flatpickr-day.today:not(.selected){border-color:#779948}
+.flatpickr-day.selected,.flatpickr-day.selected:hover,
+.flatpickr-day.startRange,.flatpickr-day.endRange{
+  color:#14210b;background:#d3eb78;border-color:#d3eb78;
+}
+.flatpickr-day:hover,.flatpickr-day:focus{
+  background:#e9f2dd;border-color:#e9f2dd;
+}
+.flatpickr-day.flatpickr-disabled,.flatpickr-day.flatpickr-disabled:hover{
+  color:#bac4b6;background:transparent;
+}
