@@ -63,6 +63,27 @@ try{
     await page.locator('.action-primary').click();
     if(!await page.locator('#bookingDetails').evaluate(el=>el.open))throw new Error(width+': Anfrage klappt nicht mit einem Klick auf');
     if(!await page.locator('input[name="name"]').isVisible())throw new Error(width+': Anfrageformular bleibt versteckt');
+
+    const dateInput=page.locator('.flatpickr-alt-input');
+    if(!await dateInput.isVisible())throw new Error(width+': Der deutsche Kalender fehlt');
+    if(await dateInput.getAttribute('placeholder')!=='TT.MM.JJJJ')throw new Error(width+': Datumsformat falsch');
+    await dateInput.click();
+    if(!await page.locator('.flatpickr-calendar.open').isVisible())throw new Error(width+': Datumskalender öffnet nicht');
+    const germanWeekdays=await page.locator('.flatpickr-calendar.open span.flatpickr-weekday').allTextContents();
+    if(!germanWeekdays.some(day=>day.trim()==='Mo'))throw new Error(width+': Wochentage sind nicht deutsch: '+germanWeekdays);
+    const pickerDate=await page.evaluate(()=>{
+      const input=document.getElementById('eventDate');
+      const picker=input._flatpickr;
+      const target=new Date();
+      target.setDate(target.getDate()+10);
+      picker.setDate(target,true);
+      return {display:picker.altInput.value,iso:input.value};
+    });
+    if(!/^\d{2}\.\d{2}\.\d{4}$/.test(pickerDate.display))throw new Error(width+': Sichtbares Datum nicht TT.MM.JJJJ: '+pickerDate.display);
+    if(!/^\d{4}-\d{2}-\d{2}$/.test(pickerDate.iso))throw new Error(width+': Datenbankdatum nicht ISO: '+pickerDate.iso);
+    if(pickerDate.display!==pickerDate.iso.slice(8,10)+'.'+pickerDate.iso.slice(5,7)+'.'+pickerDate.iso.slice(0,4))throw new Error(width+': Datumskonvertierung stimmt nicht');
+    await dateInput.press('Escape');
+
     const afterOpen=await page.evaluate(()=>document.documentElement.scrollWidth);
     if(afterOpen>width+2)throw new Error(width+': Das geöffnete Formular verursacht horizontales Scrollen');
     if(width===390)await page.screenshot({path:'artifacts/anfrage-mobil.png',fullPage:true});
