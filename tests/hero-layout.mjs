@@ -40,7 +40,10 @@ try{
     if(stacked&&!(copy.y+copy.height<art.y))throw new Error(width+': Stacked hero does not keep image below text');
     if(!stacked&&!(copy.x+copy.width<art.x))throw new Error(width+': Desktop hero columns overlap horizontally');
     const documentWidth=await page.evaluate(()=>document.documentElement.scrollWidth);
-    if(documentWidth>width+2)throw new Error(width+': Horizontal page overflow '+documentWidth);
+    if(documentWidth>width+2){
+      const offenders=await page.evaluate(()=>Array.from(document.querySelectorAll('body *')).map(el=>({tag:el.tagName,cls:el.className?.toString?.().slice(0,55),right:Math.round(el.getBoundingClientRect().right),left:Math.round(el.getBoundingClientRect().left)})).filter(e=>e.right>innerWidth+1).slice(0,12));
+      throw new Error(width+': Horizontal page overflow '+documentWidth+' from '+JSON.stringify(offenders));
+    }
     const documentLang=await page.evaluate(()=>document.documentElement.lang);
     if(documentLang!=='de')throw new Error(width+': Wrong document language '+documentLang);
     const forbidden=await page.locator('#localeToggle').count();
