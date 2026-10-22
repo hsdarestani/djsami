@@ -1,13 +1,13 @@
 # DJ SAMI — Official one-page website
 
-Fast, bilingual (English/German), mobile-first artist landing page and booking enquiries for **Cloudflare Pages**. No frontend framework. Two lightweight npm font packages are bundled into the static build and served from this site.
+German-only, mobile-first DJ profile and link hub with booking enquiries for **Cloudflare Pages**. No frontend framework. Two lightweight npm font packages are bundled into the static build and served from this site.
 
 ## Live features
 
-- Editorial single-page website, responsive hero and artist portrait
+- Compact, centered artist card modeled on the fast-access layout of the Dr Wickler one-page site, with DJ Sami's own dark visual identity
 - Spotify, YouTube, Instagram and SoundCloud links from the artist's public profile
-- Click-to-load YouTube video to avoid loading the player before the visitor asks for it
-- Booking enquiry form (not instant confirmation) with client/server validation, honeypot and per-IP / per-email limits
+- Four one-tap, full-width link cards for Spotify, YouTube, Instagram and SoundCloud, with no arrow icons
+- Collapsible booking enquiry form that opens automatically from the main booking action (not instant confirmation), with client/server validation, honeypot and per-IP / per-email limits
 - Cloudflare Pages Function stores bookings in D1
 - Private \`/admin/\` page for enquiry status (new, contacted, confirmed, declined), email action and CSV export
 - Optional Resend email alerts; no keys or user details committed
@@ -25,7 +25,7 @@ The \`functions/\` folder must remain at the repository root; it is deployed aut
 
 ## 2. Activate the booking backend
 
-1. Cloudflare Dashboard → Workers & Pages → D1 → Create database, e.g. \`djsami-bookings\`.
+1. Cloudflare Dashboard → Storage & Databases → D1 SQL Database → Create database, e.g. \`djsami-bookings\`.
 2. In that database's Console, execute the statements in \`migrations/0001_bookings.sql\` once.
 3. Open your Pages project → Settings → Bindings / Functions → D1 database bindings. Create a binding named **\`DB\`** for the database you created. Configure production and preview environments as needed.
 4. In your Pages environment variables or secrets, add **\`ADMIN_TOKEN\`**: a generated, random string of at least 24 characters (32+ recommended). **Never commit it**. Set \`RATE_LIMIT_SALT\` to another random secret if desired.
@@ -57,7 +57,7 @@ All three are required for an email alert. The booking remains stored in D1 even
 - Display and brand font: **Syne Variable** (weights up to 800), bold and editorial.
 - Body text and form font: **Manrope Variable**, readable on German desktop and mobile layouts.
 - Both fonts are installed from `@fontsource-variable` version 5.3.0 under the OFL-1.1 license and copied to `dist/fonts/` at build time. Fonts are served from the same Cloudflare Pages domain; no Google Fonts CDN calls are needed.
-- Hero copy remains separate from portrait media. Automated Chromium checks verify font loading and layout at 11 viewport widths from 320px to 1920px.
+- Portrait and name are separate grid tracks, never overlaid. Automated Chromium checks verify font loading, the booking shortcut and responsive layout across 11 viewport widths from 320px to 1920px.
 
 ## Local development
 
