@@ -22,7 +22,7 @@ jobs:
       - name: Build Cloudflare Pages output
         run: npm run build
       - name: Verify output
-        run: test -f dist/index.html && test -f dist/admin/index.html && test -f dist/_headers && test -f dist/fonts/syne-latin-variable.woff2 && test -f dist/fonts/manrope-latin-variable.woff2 && test ! -e dist/functions
+        run: test -f dist/index.html && test -f dist/admin/index.html && test -f dist/_headers && test -f dist/fonts/syne-latin-variable.woff2 && test -f dist/fonts/manrope-latin-variable.woff2 && test -f dist/vendor/flatpickr.min.js && test -f dist/vendor/flatpickr.de.js && test -f dist/vendor/flatpickr.min.css && test ! -e dist/functions
       - name: Prepare headless browser
         run: |
           npm install --no-save playwright@1.56.1
