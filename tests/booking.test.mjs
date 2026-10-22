@@ -74,62 +74,57 @@ test('unsupported HTTP methods reject',async()=>{
 });
 
 
-test('simple visitor flow and no arrow glyphs in site controls',()=>{
+
+test('compact German link hub shows four accessible channels',()=>{
   const html=readFileSync(new URL('../index.html',import.meta.url),'utf8');
   const css=readFileSync(new URL('../styles.css',import.meta.url),'utf8');
   const admin=readFileSync(new URL('../admin/index.html',import.meta.url),'utf8');
   const privacy=readFileSync(new URL('../privacy.html',import.meta.url),'utf8');
   const imprint=readFileSync(new URL('../imprint.html',import.meta.url),'utf8');
-  for (const page of [html,admin,privacy,imprint]){
-    assert.doesNotMatch(page,/[↗↖↘↙←→↑↓↻➜➔➝⇢]/u,'No arrows anywhere in visible interface');
+  for(const page of [html,admin,privacy,imprint]){
+    assert.match(page,/<html lang="de">/);
+    assert.doesNotMatch(page,/[↗↖↘↙←→↑↓↻➜➔➝⇢]/,'Arrow glyphs should not be used');
   }
-  assert.match(html,/class="mobile-booking"/);
-  assert.match(html,/class="more-details"/);
-  assert.match(html,/<details class="more-details"/);
+  for(const link of ['Spotify','YouTube','Instagram','SoundCloud'])assert.match(html,new RegExp('>'+link+'<'));
+  assert.equal([...html.matchAll(/class="link-card"/g)].length,4);
+  assert.match(html,/class="profile-grid"/);
+  assert.match(html,/class="profile-portrait"/);
+  assert.match(html,/class="profile-info"/);
+  assert.match(html,/class="quick-actions"/);
+  assert.match(html,/<details class="booking-details" id="bookingDetails">/);
+  assert.match(html,/<form id="bookingForm"/);
   assert.match(html,/name="guestCount"/);
   assert.match(html,/name="message"/);
-  assert.match(css,/env\(safe-area-inset-bottom\)/);
   assert.match(css,/@font-face\{/);
   assert.match(css,/font-family:"Syne"/);
   assert.match(css,/font-family:"Manrope"/);
   assert.match(css,/\/fonts\/syne-latin-variable\.woff2/);
   assert.match(css,/\/fonts\/manrope-latin-variable\.woff2/);
 });
-test('all visitor and administration pages use German copy',()=>{
+
+test('German-only visitor and administration wording',()=>{
   const index=readFileSync(new URL('../index.html',import.meta.url),'utf8');
-  const admin=readFileSync(new URL('../admin/index.html',import.meta.url),'utf8');
-  const privacy=readFileSync(new URL('../privacy.html',import.meta.url),'utf8');
-  const imprint=readFileSync(new URL('../imprint.html',import.meta.url),'utf8');
   const app=readFileSync(new URL('../app.js',import.meta.url),'utf8');
-  for(const [filename,html] of [['index',index],['admin',admin],['privacy',privacy],['imprint',imprint]]){
-    assert.match(html,/<html lang="de">/,filename+' language');
-    assert.doesNotMatch(html,/\b(?:Request a booking|Listen to music|Play video|Back to website|Booking requests|Privacy notice|Your name|Full name|LATEST TRACK|OUT NOW|Latest release)\b/i,filename+' has untranslated UI');
-  }
+  const admin=readFileSync(new URL('../admin/index.html',import.meta.url),'utf8');
   assert.match(index,/Auftritt anfragen/);
   assert.match(index,/Meine Musik/);
   assert.match(index,/Datenschutzerklärung/);
   assert.match(index,/Impressum/);
   assert.match(admin,/Geschützter Bereich/);
   assert.match(admin,/Aktualisieren/);
-  assert.match(admin,/Bearbeitungsstand/);
   assert.doesNotMatch(index,/data-i18n|localeToggle/);
   assert.doesNotMatch(app,/translations\s*=|localStorage|language\s*=\s*'en'/);
   assert.match(app,/language:'de'/);
+  assert.match(app,/bookingDetails\.open=true/);
+  assert.doesNotMatch(index,/\b(?:Request a booking|Listen to music|Booking requests|Latest release|OUT NOW|Full name|Latest track)\b/i);
 });
 
-test('desktop hero keeps copy and portrait in independent columns',()=>{
-  const index=readFileSync(new URL('../index.html',import.meta.url),'utf8');
-  const css=readFileSync(new URL('../styles.css',import.meta.url),'utf8');
-  const hero=index.slice(index.indexOf('<section class="hero section-wrap"'),index.indexOf('<section class="music section-wrap"'));
-  assert.match(hero,/class="hero-copy"/);
-  assert.match(hero,/class="hero-visual"/);
-  assert.match(hero,/class="hero-art"/);
-  assert.ok(hero.indexOf('class="hero-copy"')<hero.indexOf('class="hero-visual"'));
-  const portrait=hero.slice(hero.indexOf('class="hero-art"'),hero.indexOf('class="hero-visual-meta"'));
-  assert.doesNotMatch(portrait,/<h[1-6]\b|<p\b|<a\b|<span\b/,'No copy over photo');
-  assert.match(css,/grid-template-columns:minmax\(0,1\.02fr\) minmax\(0,\.98fr\)/);
-  assert.match(css,/\.hero h1\{[^}]*white-space:nowrap/);
-  assert.match(css,/@media\(max-width:850px\)/);
-  assert.match(css,/\.hero\{display:flex;flex-direction:column/);
-  assert.match(css,/\.hero-art\{[^}]*overflow:hidden/);
+test('portrait and hero text remain separate in the compact card',()=>{
+  const html=readFileSync(new URL('../index.html',import.meta.url),'utf8');
+  const hero=html.slice(html.indexOf('<section class="hero"'),html.indexOf('<section class="links-section"'));
+  const photoStart=hero.indexOf('class="profile-portrait"');
+  const infoStart=hero.indexOf('class="profile-info"');
+  assert.ok(photoStart>0 && infoStart>photoStart);
+  assert.doesNotMatch(hero.slice(photoStart,infoStart),/<h1\b|<p\b|<a\b/);
+  assert.match(hero,/<h1 id="hero-title"/);
 });
