@@ -1,0 +1,13 @@
+{
+  "name": "djsami-site",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "check": "node --check app.js && node --check functions/api/bookings.js && node --check scripts/build.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
