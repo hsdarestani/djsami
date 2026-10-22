@@ -30,7 +30,19 @@ try{
     const context=await browser.newContext({viewport:{width,height:900},deviceScaleFactor:1});
     const page=await context.newPage();
     await page.goto(origin,{waitUntil:'domcontentloaded'});
-    await page.evaluate(()=>document.fonts.ready);
+    await page.evaluate(async()=>{
+      await Promise.all([document.fonts.load('800 64px Syne'),document.fonts.load('500 16px Manrope')]);
+      await document.fonts.ready;
+    });
+    const fontState=await page.evaluate(()=>({
+      syne:[...document.fonts].some(f=>f.family==='Syne'&&f.status==='loaded'),
+      manrope:[...document.fonts].some(f=>f.family==='Manrope'&&f.status==='loaded'),
+      display:getComputedStyle(document.querySelector('#hero-title')).fontFamily,
+      body:getComputedStyle(document.body).fontFamily
+    }));
+    if(!fontState.syne||!fontState.manrope||!fontState.display.includes('Syne')||!fontState.body.includes('Manrope')){
+      throw new Error(width+': Custom fonts not loaded: '+JSON.stringify(fontState));
+    }
     const boxes=await Promise.all(['.hero-copy','.hero-art','#hero-title','.hero-content','.hero-visual','.hero-ctas'].map(s=>page.locator(s).boundingBox()));
     const [copy,art,title,content,visual,actions]=boxes;
     const stacked=width<=850;
