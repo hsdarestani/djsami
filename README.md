@@ -1,6 +1,6 @@
 # DJ SAMI — Official one-page website
 
-Fast, bilingual (English/German), mobile-first artist landing page and booking enquiries for **Cloudflare Pages**. No frontend frameworks or npm dependencies.
+Fast, bilingual (English/German), mobile-first artist landing page and booking enquiries for **Cloudflare Pages**. No frontend framework. Two lightweight npm font packages are bundled into the static build and served from this site.
 
 ## Live features
 
@@ -52,9 +52,17 @@ All three are required for an email alert. The booking remains stored in D1 even
 - Confirm who will receive booking enquiries, and set up email alerts if the admin dashboard alone is insufficient.
 - Optional: attach a custom domain to the Pages project.
 
+## Typography
+
+- Display and brand font: **Syne Variable** (weights up to 800), bold and editorial.
+- Body text and form font: **Manrope Variable**, readable on German desktop and mobile layouts.
+- Both fonts are installed from `@fontsource-variable` version 5.3.0 under the OFL-1.1 license and copied to `dist/fonts/` at build time. Fonts are served from the same Cloudflare Pages domain; no Google Fonts CDN calls are needed.
+- Hero copy remains separate from portrait media. Automated Chromium checks verify font loading and layout at 11 viewport widths from 320px to 1920px.
+
 ## Local development
 
 \`\`\`sh
+npm install
 npm run check
 npm run build
 npx wrangler pages dev dist --d1 DB=djsami-bookings
