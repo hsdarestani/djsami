@@ -43,7 +43,7 @@ const datePicker=typeof window.flatpickr==='function'
 function validBookingDate(){
   if(!datePicker)return Boolean(dateInput.value) && dateInput.value>=dateInput.min && dateInput.value<=dateInput.max;
   const shown=datePicker.altInput.value.trim();
-  if(!/^\\d{2}\\.\\d{2}\\.\\d{4}$/.test(shown))return false;
+  if(!/^\d{2}\.\d{2}\.\d{4}$/.test(shown))return false;
   const parsed=datePicker.parseDate(shown,'d.m.Y');
   if(!parsed || Number.isNaN(parsed.getTime()) || datePicker.formatDate(parsed,'d.m.Y')!==shown)return false;
   const iso=datePicker.formatDate(parsed,'Y-m-d');
