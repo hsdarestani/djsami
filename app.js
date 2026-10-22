@@ -24,6 +24,7 @@ const datePicker=typeof window.flatpickr==='function'
     locale:'de',
     dateFormat:'Y-m-d',
     altInput:true,
+    altInputClass:'flatpickr-alt-input',
     altFormat:'d.m.Y',
     ariaDateFormat:'l, j. F Y',
     allowInput:true,
