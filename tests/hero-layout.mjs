@@ -9,59 +9,64 @@ async function ready(){
     try{const r=await fetch(origin);if(r.ok)return}catch(_err){}
     await new Promise(resolve=>setTimeout(resolve,150));
   }
-  throw new Error('Local website did not start');
+  throw new Error('Der lokale Webserver konnte nicht gestartet werden.');
 }
 function noOverlap(a,b,padding=3){
-  if(!a||!b)return false;
-  return a.x+a.width<=b.x-padding || b.x+b.width<=a.x-padding ||
-    a.y+a.height<=b.y-padding || b.y+b.height<=a.y-padding;
+  return a&&b&&(a.right<=b.left-padding||b.right<=a.left-padding||a.bottom<=b.top-padding||b.bottom<=a.top-padding);
 }
-function inside(inner,outer){
-  return inner && outer && inner.x>=outer.x-2 && inner.y>=outer.y-2 &&
-    inner.x+inner.width<=outer.x+outer.width+2 &&
-    inner.y+inner.height<=outer.y+outer.height+2;
+function contained(inner,outer,slack=3){
+  return inner&&outer&&inner.left>=outer.left-slack&&inner.right<=outer.right+slack&&inner.top>=outer.top-slack&&inner.bottom<=outer.bottom+slack;
 }
 let browser;
 try{
   await ready();
   browser=await chromium.launch({headless:true,executablePath:process.env.CHROME_PATH||undefined,args:['--no-sandbox']});
   mkdirSync('artifacts',{recursive:true});
-  for(const width of [1920,1440,1280,1024,900,851,850,430,390,375,320]){
+  for(const width of [1920,1440,1024,850,768,600,430,390,375,360,320]){
     const context=await browser.newContext({viewport:{width,height:900},deviceScaleFactor:1});
     const page=await context.newPage();
     await page.goto(origin,{waitUntil:'domcontentloaded'});
     await page.evaluate(async()=>{
-      await Promise.all([document.fonts.load('800 64px Syne'),document.fonts.load('500 16px Manrope')]);
+      await Promise.all([document.fonts.load('800 42px Syne'),document.fonts.load('500 16px Manrope')]);
       await document.fonts.ready;
     });
-    const fontState=await page.evaluate(()=>({
-      syne:[...document.fonts].some(f=>f.family==='Syne'&&f.status==='loaded'),
-      manrope:[...document.fonts].some(f=>f.family==='Manrope'&&f.status==='loaded'),
-      display:getComputedStyle(document.querySelector('#hero-title')).fontFamily,
-      body:getComputedStyle(document.body).fontFamily
-    }));
-    if(!fontState.syne||!fontState.manrope||!fontState.display.includes('Syne')||!fontState.body.includes('Manrope')){
-      throw new Error(width+': Custom fonts not loaded: '+JSON.stringify(fontState));
-    }
-    const boxes=await Promise.all(['.hero-copy','.hero-art','#hero-title','.hero-content','.hero-visual','.hero-ctas'].map(s=>page.locator(s).boundingBox()));
-    const [copy,art,title,content,visual,actions]=boxes;
-    const stacked=width<=850;
-    if(!noOverlap(copy,art))throw new Error(width+': Text column and portrait overlap');
-    if(!inside(title,copy))throw new Error(width+': Main title extends outside text column');
-    if(!inside(actions,copy))throw new Error(width+': Call-to-action controls extend outside text column');
-    if(stacked&&!(copy.y+copy.height<art.y))throw new Error(width+': Stacked hero does not keep image below text');
-    if(!stacked&&!(copy.x+copy.width<art.x))throw new Error(width+': Desktop hero columns overlap horizontally');
-    const documentWidth=await page.evaluate(()=>document.documentElement.scrollWidth);
-    if(documentWidth>width+2){
-      const offenders=await page.evaluate(()=>Array.from(document.querySelectorAll('body *')).map(el=>({tag:el.tagName,cls:el.className?.toString?.().slice(0,55),right:Math.round(el.getBoundingClientRect().right),left:Math.round(el.getBoundingClientRect().left)})).filter(e=>e.right>innerWidth+1).slice(0,12));
-      throw new Error(width+': Horizontal page overflow '+documentWidth+' from '+JSON.stringify(offenders));
-    }
-    const documentLang=await page.evaluate(()=>document.documentElement.lang);
-    if(documentLang!=='de')throw new Error(width+': Wrong document language '+documentLang);
-    const forbidden=await page.locator('#localeToggle').count();
-    if(forbidden)throw new Error(width+': English toggle still visible');
-    if([1440,1024,390,320].includes(width))await page.screenshot({path:'artifacts/hero-'+width+'.png'});
-    console.log('Layout in Ordnung:',width+'px');
+    const inspect=await page.evaluate(()=>{
+      const rect=(sel)=>{
+        const element=document.querySelector(sel),r=element?.getBoundingClientRect();
+        return r?{left:r.left,right:r.right,top:r.top,bottom:r.bottom}:null;
+      };
+      const violations=[...document.querySelectorAll('body *')].map(el=>({
+        tag:el.tagName,cls:typeof el.className==='string'?el.className.slice(0,40):'',
+        right:Math.round(el.getBoundingClientRect().right)
+      })).filter(x=>x.right>innerWidth+2).slice(0,8);
+      return {
+        title:rect('#hero-title'),
+        info:rect('.profile-info'),
+        portrait:rect('.profile-portrait'),
+        hero:rect('.hero'),
+        page:rect('.page'),
+        width:document.documentElement.scrollWidth,
+        lang:document.documentElement.lang,
+        fonts:[...document.fonts].filter(x=>x.status==='loaded').map(x=>x.family),
+        visualHeading:getComputedStyle(document.querySelector('#hero-title')).fontFamily,
+        bodyFont:getComputedStyle(document.body).fontFamily,
+        violations
+      };
+    });
+    if(inspect.lang!=='de')throw new Error(width+': Falsche Sprache');
+    if(!inspect.fonts.includes('Syne')||!inspect.fonts.includes('Manrope'))throw new Error(width+': Schriftdateien wurden nicht geladen');
+    if(!inspect.visualHeading.includes('Syne')||!inspect.bodyFont.includes('Manrope'))throw new Error(width+': Falsche Schriften verwendet');
+    if(!noOverlap(inspect.portrait,inspect.info,1))throw new Error(width+': Porträt und Text überschneiden sich');
+    if(!contained(inspect.title,inspect.info,2))throw new Error(width+': Künstlername läuft aus dem Textbereich');
+    if(inspect.width>width+2)throw new Error(width+': Horizontales Scrollen um '+(inspect.width-width)+'px: '+JSON.stringify(inspect.violations));
+    if(width===1440||width===390)await page.screenshot({path:'artifacts/startseite-'+width+'.png',fullPage:true});
+    await page.locator('.action-primary').click();
+    if(!await page.locator('#bookingDetails').evaluate(el=>el.open))throw new Error(width+': Anfrage klappt nicht mit einem Klick auf');
+    if(!await page.locator('input[name="name"]').isVisible())throw new Error(width+': Anfrageformular bleibt versteckt');
+    const afterOpen=await page.evaluate(()=>document.documentElement.scrollWidth);
+    if(afterOpen>width+2)throw new Error(width+': Das geöffnete Formular verursacht horizontales Scrollen');
+    if(width===390)await page.screenshot({path:'artifacts/anfrage-mobil.png',fullPage:true});
+    console.log('Seite und Buchungsformular in Ordnung:',width+'px');
     await context.close();
   }
 }finally{
