@@ -89,7 +89,11 @@ test('simple visitor flow and no arrow glyphs in site controls',()=>{
   assert.match(html,/name="guestCount"/);
   assert.match(html,/name="message"/);
   assert.match(css,/env\(safe-area-inset-bottom\)/);
-  assert.match(css,/Avenir Next/);
+  assert.match(css,/@font-face\{/);
+  assert.match(css,/font-family:"Syne"/);
+  assert.match(css,/font-family:"Manrope"/);
+  assert.match(css,/\/fonts\/syne-latin-variable\.woff2/);
+  assert.match(css,/\/fonts\/manrope-latin-variable\.woff2/);
 });
 test('all visitor and administration pages use German copy',()=>{
   const index=readFileSync(new URL('../index.html',import.meta.url),'utf8');
