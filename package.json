@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "build": "node scripts/build.mjs",
-    "check": "node --check app.js && node --check functions/api/bookings.js && node --check scripts/build.mjs"
+    "check": "node --check app.js && node --check functions/api/bookings.js && node --check scripts/build.mjs",
+    "test": "node --test"
   },
   "engines": {
     "node": ">=18"
