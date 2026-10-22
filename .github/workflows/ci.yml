@@ -1,0 +1,23 @@
+name: Website and booking tests
+on:
+  push:
+    branches: [main]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check JS syntax
+        run: npm run check
+      - name: Run booking tests
+        run: npm test
+      - name: Build Cloudflare Pages output
+        run: npm run build
+      - name: Verify output
+        run: test -f dist/index.html && test -f dist/admin/index.html && test -f dist/_headers && test ! -e dist/functions
