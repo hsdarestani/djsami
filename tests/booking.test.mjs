@@ -72,3 +72,31 @@ test('unsupported HTTP methods reject',async()=>{
   const res=await onRequest(context(request('DELETE'),stubDb()));
   assert.equal(res.status,405);
 });
+
+
+test('simple visitor flow and no arrow glyphs in site controls',()=>{
+  const html=readFileSync(new URL('../index.html',import.meta.url),'utf8');
+  const css=readFileSync(new URL('../styles.css',import.meta.url),'utf8');
+  const admin=readFileSync(new URL('../admin/index.html',import.meta.url),'utf8');
+  const privacy=readFileSync(new URL('../privacy.html',import.meta.url),'utf8');
+  const imprint=readFileSync(new URL('../imprint.html',import.meta.url),'utf8');
+  for (const page of [html,admin,privacy,imprint]){
+    assert.doesNotMatch(page,/[↗↖↘↙←→↑↓↻➜➔➝⇢]/u,'No arrows anywhere in visible interface');
+  }
+  assert.match(html,/class="mobile-booking"/);
+  assert.match(html,/class="more-details"/);
+  assert.match(html,/<details class="more-details"/);
+  assert.match(html,/name="guestCount"/);
+  assert.match(html,/name="message"/);
+  assert.match(css,/env\(safe-area-inset-bottom\)/);
+  assert.match(css,/Avenir Next/);
+});
+test('translations include every rendered label in both languages',()=>{
+  const html=readFileSync(new URL('../index.html',import.meta.url),'utf8');
+  const script=readFileSync(new URL('../app.js',import.meta.url),'utf8');
+  const keys=[...html.matchAll(/data-i18n="([^"]+)"/g)].map(m=>m[1]);
+  for(const key of new Set(keys)){
+    const matches=script.match(new RegExp('(?:^|[,\\s])'+key+'\\s*:', 'g'))||[];
+    assert.equal(matches.length,2,'Expected EN and DE translation for '+key);
+  }
+});
