@@ -40,7 +40,7 @@ async function sendNotification(env,body){
     'Gästezahl: '+(body.guestCount||'Nicht angegeben'),
     'Nachricht: '+(body.message||'Keine weiteren Angaben'),'',
     'Anfragen im geschützten Bereich unter /admin/ ansehen.'
-  ].join('\\n');
+  ].join('\n');
   // Notification failures never discard a booking that is already stored.
   try {
     await fetch('https://api.resend.com/emails',{
