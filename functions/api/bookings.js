@@ -29,19 +29,23 @@ async function authorized(request,env){
 }
 async function sendNotification(env,body){
   if(!env.RESEND_API_KEY||!env.BOOKING_NOTIFICATION_EMAIL||!env.BOOKING_FROM_EMAIL)return;
+  const types={Club:'Clubveranstaltung',Festival:'Festival',Private:'Private Feier',Corporate:'Firmenveranstaltung',Other:'Sonstiges'};
   const message=[
-    'New DJ SAMI booking enquiry', '',
-    'Name: '+body.name,'Email: '+body.email,'Type: '+body.eventType,
-    'Date: '+body.eventDate,'Location: '+body.location,
-    'Guests: '+(body.guestCount||'Not provided'),
-    'Message: '+(body.message||'Not provided'),'',
-    'Review requests at /admin/ on your site.'
-  ].join('\n');
+    'Neue Auftrittsanfrage für DJ Sami', '',
+    'Name: '+body.name,
+    'E-Mail: '+body.email,
+    'Veranstaltung: '+(types[body.eventType]||body.eventType),
+    'Datum: '+body.eventDate,
+    'Ort: '+body.location,
+    'Gästezahl: '+(body.guestCount||'Nicht angegeben'),
+    'Nachricht: '+(body.message||'Keine weiteren Angaben'),'',
+    'Anfragen im geschützten Bereich unter /admin/ ansehen.'
+  ].join('\\n');
   // Notification failures never discard a booking that is already stored.
   try {
     await fetch('https://api.resend.com/emails',{
       method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+env.RESEND_API_KEY},
-      body:JSON.stringify({from:env.BOOKING_FROM_EMAIL,to:[env.BOOKING_NOTIFICATION_EMAIL],subject:'DJ SAMI booking — '+body.eventDate+' / '+body.location,text:message})
+      body:JSON.stringify({from:env.BOOKING_FROM_EMAIL,to:[env.BOOKING_NOTIFICATION_EMAIL],subject:'DJ Sami – Auftrittsanfrage am '+body.eventDate+' / '+body.location,text:message})
     });
   }catch(_err){/* Database record remains the source of truth. */}
 }
@@ -60,7 +64,7 @@ export async function onRequest({request,env,waitUntil}){
       name:clean(data.name),email:clean(data.email).toLowerCase(),
       eventType:clean(data.eventType),eventDate:clean(data.eventDate),
       location:clean(data.location),message:clean(data.message),
-      language:data.language==='de'?'de':'en',
+      language:'de',
       guestCount:data.guestCount===null||data.guestCount===''||data.guestCount===undefined?null:Number(data.guestCount)
     };
     if(!data.privacy||!isString(item.name,2,120)||!isString(item.email,5,254)
