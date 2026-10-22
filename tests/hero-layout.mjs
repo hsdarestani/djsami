@@ -24,7 +24,7 @@ function inside(inner,outer){
 let browser;
 try{
   await ready();
-  browser=await chromium.launch({headless:true,args:['--no-sandbox']});
+  browser=await chromium.launch({headless:true,executablePath:process.env.CHROME_PATH||undefined,args:['--no-sandbox']});
   mkdirSync('artifacts',{recursive:true});
   for(const width of [1920,1440,1280,1024,900,851,850,430,390,375,320]){
     const context=await browser.newContext({viewport:{width,height:900},deviceScaleFactor:1});
