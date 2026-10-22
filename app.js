@@ -1,6 +1,7 @@
 (function(){
 'use strict';
-var language = localStorage.getItem('djSamiLanguage') === 'de' ? 'de' : 'en';
+var language = 'en';
+try { language = localStorage.getItem('djSamiLanguage') === 'de' ? 'de' : 'en'; } catch (_e) {}
 var translations={
   en:{
     nav_music:'Music',nav_about:'About',nav_booking:'Bookings',book_now:'Book DJ Sami',
