@@ -4,7 +4,7 @@ import { readFileSync } from 'node:fs';
 import { onRequest } from '../functions/api/bookings.js';
 const ADMIN_TOKEN='s'.repeat(48);
 const future=new Date(Date.now()+10*86400000).toISOString().slice(0,10);
-const payload={name:'Test Booking',email:'booking@example.com',eventType:'Festival',eventDate:future,location:'Frankfurt',guestCount:240,message:'An evening show',privacy:true,language:'en',website:''};
+const payload={name:'Test Booking',email:'booking@example.com',eventType:'Festival',eventDate:future,location:'Frankfurt',guestCount:240,message:'Abendveranstaltung',privacy:true,language:'de',website:''};
 function stubDb(){
   const calls=[];
   return {
@@ -91,12 +91,41 @@ test('simple visitor flow and no arrow glyphs in site controls',()=>{
   assert.match(css,/env\(safe-area-inset-bottom\)/);
   assert.match(css,/Avenir Next/);
 });
-test('translations include every rendered label in both languages',()=>{
-  const html=readFileSync(new URL('../index.html',import.meta.url),'utf8');
-  const script=readFileSync(new URL('../app.js',import.meta.url),'utf8').split('var toggle=')[0];
-  const keys=[...html.matchAll(/data-i18n="([^"]+)"/g)].map(m=>m[1]);
-  for(const key of new Set(keys)){
-    const matches=script.match(new RegExp('(?:^|[,\\s])'+key+'\\s*:', 'g'))||[];
-    assert.equal(matches.length,2,'Expected EN and DE translation for '+key);
+test('all visitor and administration pages use German copy',()=>{
+  const index=readFileSync(new URL('../index.html',import.meta.url),'utf8');
+  const admin=readFileSync(new URL('../admin/index.html',import.meta.url),'utf8');
+  const privacy=readFileSync(new URL('../privacy.html',import.meta.url),'utf8');
+  const imprint=readFileSync(new URL('../imprint.html',import.meta.url),'utf8');
+  const app=readFileSync(new URL('../app.js',import.meta.url),'utf8');
+  for(const [filename,html] of [['index',index],['admin',admin],['privacy',privacy],['imprint',imprint]]){
+    assert.match(html,/<html lang="de">/,filename+' language');
+    assert.doesNotMatch(html,/\b(?:Request a booking|Listen to music|Play video|Back to website|Booking requests|Privacy notice|Your name|Full name|LATEST TRACK|OUT NOW|Latest release)\b/i,filename+' has untranslated UI');
   }
+  assert.match(index,/Auftritt anfragen/);
+  assert.match(index,/Meine Musik/);
+  assert.match(index,/Datenschutzerklärung/);
+  assert.match(index,/Impressum/);
+  assert.match(admin,/Geschützter Bereich/);
+  assert.match(admin,/Aktualisieren/);
+  assert.match(admin,/Bearbeitungsstand/);
+  assert.doesNotMatch(index,/data-i18n|localeToggle/);
+  assert.doesNotMatch(app,/translations\s*=|localStorage|language\s*=\s*'en'/);
+  assert.match(app,/language:'de'/);
+});
+
+test('desktop hero keeps copy and portrait in independent columns',()=>{
+  const index=readFileSync(new URL('../index.html',import.meta.url),'utf8');
+  const css=readFileSync(new URL('../styles.css',import.meta.url),'utf8');
+  const hero=index.slice(index.indexOf('<section class="hero section-wrap"'),index.indexOf('<section class="music section-wrap"'));
+  assert.match(hero,/class="hero-copy"/);
+  assert.match(hero,/class="hero-visual"/);
+  assert.match(hero,/class="hero-art"/);
+  assert.ok(hero.indexOf('class="hero-copy"')<hero.indexOf('class="hero-visual"'));
+  const portrait=hero.slice(hero.indexOf('class="hero-art"'),hero.indexOf('class="hero-visual-meta"'));
+  assert.doesNotMatch(portrait,/<h[1-6]\b|<p\b|<a\b|<span\b/,'No copy over photo');
+  assert.match(css,/grid-template-columns:minmax\(0,1\.02fr\) minmax\(0,\.98fr\)/);
+  assert.match(css,/\.hero h1\{[^}]*white-space:nowrap/);
+  assert.match(css,/@media\(max-width:850px\)/);
+  assert.match(css,/\.hero\{display:flex;flex-direction:column/);
+  assert.match(css,/\.hero-art\{[^}]*overflow:hidden/);
 });
