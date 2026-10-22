@@ -17,6 +17,40 @@ dateInput.min=localDate(now);
 const lastAllowed=new Date(now);
 lastAllowed.setFullYear(lastAllowed.getFullYear()+2);
 dateInput.max=localDate(lastAllowed);
+
+// German display in all browsers (including iPhones), ISO format for D1.
+const datePicker=typeof window.flatpickr==='function'
+  ?window.flatpickr(dateInput,{
+    locale:'de',
+    dateFormat:'Y-m-d',
+    altInput:true,
+    altFormat:'d.m.Y',
+    ariaDateFormat:'l, j. F Y',
+    allowInput:true,
+    disableMobile:true,
+    minDate:dateInput.min,
+    maxDate:dateInput.max,
+    monthSelectorType:'dropdown',
+    onReady:function(_dates,_value,instance){
+      instance.altInput.placeholder='TT.MM.JJJJ';
+      instance.altInput.setAttribute('aria-label','Veranstaltungsdatum im Format TT.MM.JJJJ');
+      instance.altInput.setAttribute('autocomplete','off');
+      instance.altInput.setAttribute('lang','de-DE');
+    }
+  })
+  :null;
+
+function validBookingDate(){
+  if(!datePicker)return Boolean(dateInput.value) && dateInput.value>=dateInput.min && dateInput.value<=dateInput.max;
+  const shown=datePicker.altInput.value.trim();
+  if(!/^\\d{2}\\.\\d{2}\\.\\d{4}$/.test(shown))return false;
+  const parsed=datePicker.parseDate(shown,'d.m.Y');
+  if(!parsed || Number.isNaN(parsed.getTime()) || datePicker.formatDate(parsed,'d.m.Y')!==shown)return false;
+  const iso=datePicker.formatDate(parsed,'Y-m-d');
+  if(iso<dateInput.min||iso>dateInput.max)return false;
+  datePicker.setDate(parsed,false);
+  return dateInput.value===iso;
+}
 document.getElementById('year').textContent=String(now.getFullYear());
 
 // A booking request should be accessible in one tap, without sending users
@@ -48,7 +82,7 @@ function showStatus(message,kind,instagram){
 }
 form.addEventListener('submit',async function(event){
   event.preventDefault();
-  if(!form.reportValidity()||!form.elements.privacy.checked||form.elements.eventDate.value<dateInput.min){
+  if(!form.reportValidity()||!form.elements.privacy.checked||!validBookingDate()){
     showStatus('Bitte fülle die Pflichtfelder aus und wähle ein gültiges Datum.','error');
     return;
   }
@@ -78,6 +112,7 @@ form.addEventListener('submit',async function(event){
     const result=await response.json().catch(function(){return {}});
     if(response.ok&&result.ok){
       form.reset();
+      if(datePicker)datePicker.clear();
       moreDetails.open=false;
       bookingDetails.open=true;
       showStatus('Vielen Dank! Deine Anfrage wurde übermittelt. Der Termin ist erst nach einer Bestätigung reserviert.','success');
