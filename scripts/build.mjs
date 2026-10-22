@@ -4,12 +4,17 @@ import { join, dirname } from 'node:path';
 // Fonts come from installed OFL-licensed packages, served by our own domain.
 // We use the Latin subset, which includes German ä, ö, ü and ß.
 const files=['index.html','styles.css','app.js','favicon.svg','_headers','robots.txt','privacy.html','imprint.html','admin/index.html'];
+const datePicker=[
+  ['node_modules/flatpickr/dist/flatpickr.min.js','vendor/flatpickr.min.js'],
+  ['node_modules/flatpickr/dist/l10n/de.js','vendor/flatpickr.de.js'],
+  ['node_modules/flatpickr/dist/flatpickr.min.css','vendor/flatpickr.min.css']
+];
 const fonts=[
   ['node_modules/@fontsource-variable/syne/files/syne-latin-wght-normal.woff2','fonts/syne-latin-variable.woff2'],
   ['node_modules/@fontsource-variable/manrope/files/manrope-latin-wght-normal.woff2','fonts/manrope-latin-variable.woff2']
 ];
 rmSync('dist',{recursive:true,force:true});
-for(const [source,destination] of [...files.map(path=>[path,path]),...fonts]){
+for(const [source,destination] of [...files.map(path=>[path,path]),...fonts,...datePicker]){
   const output=join('dist',destination);
   mkdirSync(dirname(output),{recursive:true});
   copyFileSync(source,output);
