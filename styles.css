@@ -1,11 +1,25 @@
+@font-face{
+  font-family:"Syne";
+  src:url("/fonts/syne-latin-variable.woff2") format("woff2");
+  font-style:normal;
+  font-weight:400 800;
+  font-display:swap;
+}
+@font-face{
+  font-family:"Manrope";
+  src:url("/fonts/manrope-latin-variable.woff2") format("woff2");
+  font-style:normal;
+  font-weight:200 800;
+  font-display:swap;
+}
 /* DJ SAMI: hochwertig, klar und vollständig deutschsprachig */
 :root{
   color-scheme:dark;
   --bg:#0c0f10;--surface:#191d1c;--surface2:#222927;
   --ink:#f6f7f2;--muted:#b8c0b9;--line:rgba(235,241,231,.14);
   --accent:#ddf65f;--accent-ink:#142007;
-  --body:"Avenir Next","Segoe UI Variable Text","Segoe UI",system-ui,-apple-system,sans-serif;
-  --display:"Avenir Next Condensed","Segoe UI Variable Display","Arial Narrow","Arial",sans-serif
+  --body:"Manrope","Segoe UI",system-ui,sans-serif;
+  --display:"Syne","Arial Black","Arial",sans-serif
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth;scroll-padding-top:90px}
@@ -19,7 +33,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
 .site-shell{max-width:1600px;margin:auto}
 .section-wrap{padding-left:clamp(22px,5.2vw,82px);padding-right:clamp(22px,5.2vw,82px)}
 .header{height:86px;display:flex;align-items:center;justify-content:space-between;gap:30px;padding:0 clamp(22px,5.2vw,82px);border-bottom:1px solid var(--line);position:relative;z-index:4;background:var(--bg)}
-.wordmark,.footer-logo{font-family:var(--display);font-weight:900;letter-spacing:-.065em;line-height:1;white-space:nowrap;font-size:31px}
+.wordmark,.footer-logo{font-family:var(--display);font-weight:800;letter-spacing:-.09em;line-height:1;white-space:nowrap;font-size:30px}
 .wordmark strong,.footer-logo strong{color:var(--accent)}
 .wordmark-dot{display:inline-block;width:7px;height:7px;background:var(--accent);border-radius:50%;margin-left:5px;vertical-align:top}
 .desktop-nav{display:flex;gap:clamp(20px,3.6vw,52px);align-items:center;margin-left:auto}
@@ -39,9 +53,9 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
 .eyebrow{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
 .live-dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--accent);box-shadow:0 0 20px rgba(221,246,95,.46);flex-shrink:0}
 .hero-overline{font-weight:800;font-size:clamp(13px,1.3vw,17px);letter-spacing:.20em;color:#d1d6c9;margin-top:clamp(42px,5.2vw,78px)}
-.hero h1{font-family:var(--display);font-size:clamp(65px,6.7vw,114px);line-height:1.03;letter-spacing:-.078em;font-weight:900;white-space:nowrap;margin:10px 0 0}
-.hero h1 span{color:var(--accent)}.hero h1 .hero-stop{color:#eff2e5}
-.hero-lead{font-family:var(--display);font-size:clamp(28px,3.0vw,43px);font-weight:750;letter-spacing:-.055em;line-height:1.17;margin-top:clamp(27px,3vw,43px);max-width:540px;text-wrap:balance}
+.hero h1{font-family:var(--display);font-size:clamp(76px,8vw,128px);line-height:.85;letter-spacing:-.10em;font-weight:800;white-space:nowrap;margin:16px 0 0;max-width:100%;position:relative}
+.hero h1 .hero-name-pre{display:block;color:#f4f7f0;font-size:.34em;letter-spacing:.19em;line-height:1.4;margin-left:.1em;font-weight:700}.hero h1 .hero-name-main{display:block;width:max-content;max-width:100%;color:var(--accent);letter-spacing:-.105em;line-height:.98;position:relative}.hero h1 .hero-name-main::after{content:"";display:block;width:39%;height:5px;border-radius:10px;background:linear-gradient(90deg,var(--accent),rgba(221,246,95,0));margin-top:20px}.hero h1 .hero-stop{color:#eff2e5}
+.hero-lead{font-family:var(--display);font-size:clamp(27px,2.65vw,39px);font-weight:700;letter-spacing:-.065em;line-height:1.2;margin-top:clamp(30px,3.2vw,46px);max-width:540px;text-wrap:balance}
 .hero-sub{font-size:clamp(16px,1.5vw,19px);line-height:1.7;margin-top:14px;color:var(--muted);max-width:490px}
 .hero-ctas{display:flex;flex-wrap:wrap;gap:12px;margin-top:34px}
 .hero-ctas .btn{min-width:173px}
@@ -59,21 +73,21 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
 /* Musik */
 .music{padding-top:100px;padding-bottom:108px;border-top:1px solid var(--line);background:linear-gradient(180deg,#111615,#0c0f10)}
 .section-heading{display:flex;align-items:end;justify-content:space-between;gap:30px;margin-bottom:37px}
-.section-heading h2,.about h2,.booking h2{font-family:var(--display);font-weight:850;line-height:1.1;letter-spacing:-.055em;font-size:clamp(51px,5.65vw,86px);margin-top:12px;text-wrap:balance}
+.section-heading h2,.about h2,.booking h2{font-family:var(--display);font-weight:800;line-height:1.13;letter-spacing:-.075em;font-size:clamp(46px,5.1vw,78px);margin-top:15px;text-wrap:balance;max-width:100%}
 .title-dot{color:var(--accent)}
 .section-description{color:var(--muted);max-width:340px;font-size:16px;line-height:1.65;padding-bottom:5px}
 .music-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
 .platform-card{min-height:200px;padding:26px;display:flex;flex-direction:column;justify-content:flex-end;align-items:flex-start;gap:6px;border:1px solid var(--line);background:linear-gradient(155deg,#262e28 0%,#191d1c 80%);border-radius:23px;transition:transform .2s,border-color .2s,background .2s;min-width:0}
 .platform-card:hover{transform:translateY(-4px);border-color:rgba(221,246,95,.76);background:#293227}
 .platform-mark{min-width:45px;height:45px;border:1px solid rgba(221,246,95,.34);background:rgba(221,246,95,.07);border-radius:13px;display:inline-flex;justify-content:center;align-items:center;margin-bottom:auto;color:var(--accent);font-size:13px;font-weight:850;letter-spacing:-.025em}
-.platform-card strong{font-family:var(--display);font-size:29px;line-height:1.1;font-weight:850;letter-spacing:-.045em}
+.platform-card strong{font-family:var(--display);font-size:26px;line-height:1.13;font-weight:800;letter-spacing:-.06em}
 .platform-card small{font-size:13px;color:var(--muted);line-height:1.5}
 .featured-track{margin-top:16px;padding:22px 26px;border:1px solid rgba(221,246,95,.22);border-radius:22px;background:linear-gradient(110deg,#28331f,#1c231b);display:flex;justify-content:space-between;align-items:center;gap:20px}
 .track-identity{display:flex;gap:21px;align-items:center;min-width:0}
 .track-disc{width:65px;height:65px;flex:0 0 65px;border:11px solid #0c0f10;border-radius:50%;background:var(--accent);box-shadow:0 0 0 1px rgba(255,255,255,.16),6px 12px 25px rgba(0,0,0,.2);display:grid;place-items:center}
 .track-disc span{width:7px;height:7px;border-radius:50%;background:#17250c}
 .track-kicker{font-size:11px;font-weight:850;letter-spacing:.13em;color:var(--accent)}
-.featured-track h3{font-family:var(--display);font-size:28px;letter-spacing:-.045em;font-weight:850;line-height:1.15;margin-top:6px}
+.featured-track h3{font-family:var(--display);font-size:26px;letter-spacing:-.06em;font-weight:800;line-height:1.15;margin-top:6px}
 .track-action,.about-book{font-size:14px;font-weight:800;white-space:nowrap;text-decoration:underline;text-underline-offset:5px;color:var(--accent)}
 /* Künstler und Video */
 .about{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(40px,7vw,118px);align-items:center;border-top:1px solid var(--line);padding-top:106px;padding-bottom:114px}
@@ -84,19 +98,19 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
 .video-inner{position:relative;isolation:isolate;min-height:360px;border-radius:28px;border:1px solid var(--line);background:radial-gradient(circle at 82% 25%,rgba(221,246,95,.19),transparent 42%),linear-gradient(140deg,#364337,#1b231e 70%);overflow:hidden;padding:36px;display:flex;flex-direction:column;align-items:flex-start;justify-content:space-between;gap:45px}
 .video-inner::before{content:"";border:1px solid rgba(221,246,95,.16);width:400px;height:400px;border-radius:50%;position:absolute;right:-170px;bottom:-230px;z-index:-1;box-shadow:0 0 0 65px rgba(221,246,95,.025)}
 .video-label{font-size:11px;letter-spacing:.15em;color:var(--accent);font-weight:850}
-.video-copy h3{font-family:var(--display);font-size:clamp(34px,3.5vw,54px);font-weight:850;letter-spacing:-.05em;line-height:1.16;margin-top:15px}
+.video-copy h3{font-family:var(--display);font-size:clamp(33px,3.3vw,48px);font-weight:800;letter-spacing:-.07em;line-height:1.16;margin-top:15px}
 .play-button{background:var(--accent);color:var(--accent-ink);border:0;border-radius:13px;min-height:56px;padding:15px 24px;display:flex;align-items:center;justify-content:center;gap:14px;font-weight:800;font-size:15px;transition:background .2s}
 .play-button:hover{background:#efffa9}
 .play-icon{width:0;height:0;border-top:7px solid transparent;border-bottom:7px solid transparent;border-left:12px solid var(--accent-ink)}
 .video-frame{position:absolute;inset:0;width:100%;height:100%;background:#000;border:0;z-index:2}
 /* Anfrage */
 .booking{display:grid;grid-template-columns:minmax(0,.86fr) minmax(0,1.14fr);gap:clamp(34px,6vw,100px);align-items:start;border-top:1px solid var(--line);background:#181e1b;padding-top:108px;padding-bottom:112px}
-.booking h2{font-size:clamp(52px,5.9vw,88px);max-width:550px}
+.booking h2{font-size:clamp(44px,4.85vw,72px);max-width:550px}
 .booking-intro>p:not(.section-kicker){max-width:440px;font-size:18px;color:var(--muted);line-height:1.7;margin-top:26px}
 .booking-intro .booking-clarification{color:var(--accent)!important;font-weight:750;font-size:14px!important;margin-top:20px!important}
 .booking-form{background:#f6f8f1;color:#172015;border-radius:25px;padding:clamp(25px,3.3vw,45px);box-shadow:0 22px 60px rgba(0,0,0,.25)}
 .form-heading{display:flex;justify-content:space-between;align-items:start;gap:16px;margin-bottom:31px}
-.form-heading h3{font-family:var(--display);font-size:clamp(25px,2.4vw,33px);line-height:1.22;letter-spacing:-.04em;font-weight:850;max-width:330px}
+.form-heading h3{font-family:var(--display);font-size:clamp(23px,2.2vw,30px);line-height:1.23;letter-spacing:-.065em;font-weight:800;max-width:390px}
 .form-heading>span{white-space:nowrap;color:#64715e;font-size:12px;padding-top:7px}
 .form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:19px 17px}
 .form-grid label,.extra-fields label{display:flex;flex-direction:column;gap:8px;min-width:0}
@@ -128,7 +142,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
 .form-footnote{font-size:12px;text-align:center;color:#6a7466;margin-top:15px}
 .footer{padding-top:70px;padding-bottom:35px}
 .footer-primary{display:flex;justify-content:space-between;align-items:center;gap:25px;padding-bottom:55px}
-.footer-logo{font-size:clamp(62px,9vw,136px)}
+.footer-logo{font-size:clamp(55px,8vw,120px)}
 .footer-primary>span{font-size:14px;color:var(--muted)}
 .footer-bottom{border-top:1px solid var(--line);padding-top:24px;display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;color:var(--muted);font-size:13px}
 .footer-bottom>div{display:flex;gap:25px;flex-wrap:wrap}
@@ -136,7 +150,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
 .mobile-booking{display:none}
 @media(max-width:1180px){
  .hero{grid-template-columns:minmax(0,1.03fr) minmax(0,.97fr);gap:35px;min-height:615px}
- .hero h1{font-size:clamp(65px,6.25vw,86px)}
+ .hero h1{font-size:clamp(66px,6.4vw,86px)}
  .hero-overline{margin-top:50px}
  .hero-art{min-height:415px}
  .music-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
@@ -152,7 +166,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
  .hero{display:flex;flex-direction:column;gap:36px;min-height:0;padding-top:49px;padding-bottom:63px}
  .hero-copy{padding:0;gap:28px}
  .hero-overline{margin-top:46px}
- .hero h1{font-size:clamp(69px,13.3vw,117px)}
+ .hero h1{font-size:clamp(68px,13vw,112px)}
  .hero-lead{font-size:clamp(31px,5.7vw,48px);margin-top:22px}
  .hero-sub{font-size:17px}
  .hero-ctas{margin-top:29px}
@@ -175,7 +189,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
  .mobile-booking{display:flex;justify-content:center;align-items:center;text-align:center;position:fixed;z-index:12;left:16px;right:16px;bottom:calc(12px + env(safe-area-inset-bottom));min-height:56px;border-radius:15px;background:var(--accent);color:var(--accent-ink);font-size:15px;font-weight:850;box-shadow:0 8px 45px rgba(0,0,0,.44)}
 }
 @media(max-width:530px){
- .hero h1{font-size:clamp(64px,15.3vw,92px)}
+ .hero h1{font-size:clamp(63px,14.5vw,86px)}
  .hero-overline{letter-spacing:.14em;font-size:12px}
  .hero-ctas{width:100%;gap:10px}
  .hero-ctas .btn{flex:1;min-width:0;padding:12px 9px;font-size:13px}
@@ -184,20 +198,20 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
  .hero-visual-meta{font-size:10px}
  .music-grid{gap:11px}
  .platform-card{padding:20px;min-height:154px;border-radius:17px}
- .platform-card strong{font-size:25px}
+ .platform-card strong{font-size:23px}
  .platform-card small{font-size:12px}
  .featured-track{padding:19px;gap:11px}
  .track-identity{gap:12px}
  .track-disc{width:49px;height:49px;flex-basis:49px;border-width:9px}
  .track-kicker{font-size:9px}
- .featured-track h3{font-size:22px}
+ .featured-track h3{font-size:21px}
  .track-action{font-size:12px}
  .video-inner{min-height:290px;padding:28px}
  .form-grid{grid-template-columns:1fr}
  .form-grid label.full{grid-column:auto}
  .form-heading>span{display:none}
  .booking-form{border-radius:19px;padding:25px 21px}
- .footer-logo{font-size:clamp(52px,13vw,74px)}
+ .footer-logo{font-size:clamp(49px,12.5vw,69px)}
  .footer-bottom{align-items:flex-start}
  .footer-bottom>div{gap:15px}
 }
@@ -217,4 +231,21 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
  .platform-mark{grid-column:1;grid-row:1/3;margin:0}
  .platform-card strong{grid-column:2;grid-row:1;font-size:24px}
  .platform-card small{grid-column:2;grid-row:2}
+}
+
+/* Klare DJ-Typografie: große Headlines, präzise Labels und gut lesbare Texte. */
+.desktop-nav a,.btn,.header-book,.track-action,.about-book,.platform-card small{
+  font-family:var(--body);
+}
+.hero-overline{font-weight:750;letter-spacing:.21em}
+.form-grid label>span,.extra-fields label>span{font-weight:750}
+@media(max-width:850px){
+ .hero h1 .hero-name-main::after{height:4px;margin-top:14px}
+}
+@media(max-width:380px){
+ .hero h1{font-size:clamp(57px,17vw,64px)}
+ .hero h1 .hero-name-main::after{margin-top:11px}
+ .hero-lead{font-size:25px}
+ .featured-track h3{font-size:19px}
+ .platform-card strong{font-size:22px}
 }
