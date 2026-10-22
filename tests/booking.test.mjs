@@ -128,3 +128,21 @@ test('portrait and hero text remain separate in the compact card',()=>{
   assert.doesNotMatch(hero.slice(photoStart,infoStart),/<h1\b|<p\b|<a\b/);
   assert.match(hero,/<h1 id="hero-title"/);
 });
+
+
+test('German calendar displays TT.MM.JJJJ while keeping ISO booking dates',()=>{
+  const html=readFileSync(new URL('../index.html',import.meta.url),'utf8');
+  const app=readFileSync(new URL('../app.js',import.meta.url),'utf8');
+  const build=readFileSync(new URL('../scripts/build.mjs',import.meta.url),'utf8');
+  assert.match(html,/lang="de-DE" name="eventDate"/);
+  assert.match(html,/vendor\/flatpickr\.min\.js/);
+  assert.match(html,/vendor\/flatpickr\.de\.js/);
+  assert.match(html,/vendor\/flatpickr\.min\.css/);
+  assert.match(app,/locale:'de'/);
+  assert.match(app,/altFormat:'d\.m\.Y'/);
+  assert.match(app,/dateFormat:'Y-m-d'/);
+  assert.match(app,/disableMobile:true/);
+  assert.match(app,/TT\.MM\.JJJJ/);
+  assert.match(app,/validBookingDate\(\)/);
+  assert.match(build,/vendor\/flatpickr\.de\.js/);
+});
