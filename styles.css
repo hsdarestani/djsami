@@ -263,3 +263,9 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
  .platform-mark{min-width:40px;height:40px}
  .platform-card strong{font-size:20px}
 }
+
+/* Keine abgeschnittenen Überschriften auf sehr schmalen Smartphones. */
+@media(max-width:380px){
+ .section-heading h2,.about h2,.booking h2{font-size:clamp(31px,10vw,40px);letter-spacing:-.07em}
+ .footer-logo{font-size:40px}
+}
