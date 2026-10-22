@@ -93,7 +93,7 @@ test('simple visitor flow and no arrow glyphs in site controls',()=>{
 });
 test('translations include every rendered label in both languages',()=>{
   const html=readFileSync(new URL('../index.html',import.meta.url),'utf8');
-  const script=readFileSync(new URL('../app.js',import.meta.url),'utf8');
+  const script=readFileSync(new URL('../app.js',import.meta.url),'utf8').split('var toggle=')[0];
   const keys=[...html.matchAll(/data-i18n="([^"]+)"/g)].map(m=>m[1]);
   for(const key of new Set(keys)){
     const matches=script.match(new RegExp('(?:^|[,\\s])'+key+'\\s*:', 'g'))||[];
