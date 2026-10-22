@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow"><meta name="theme-color" content="#101111">
+<title>DJ SAMI — Booking requests</title>
+<style>
+:root{color-scheme:dark;font-family:Arial,Helvetica,sans-serif;background:#101111;color:#f5f5f0}*{box-sizing:border-box}body{margin:0;padding:30px max(20px,4vw)}button,input,select{font:inherit}button{cursor:pointer}button:disabled{opacity:.5;cursor:wait}a{color:#d7ff45}.head{display:flex;justify-content:space-between;align-items:center;gap:20px;border-bottom:1px solid #353735;padding-bottom:25px}.brand{font-size:25px;font-weight:900;letter-spacing:-.07em}.brand span{color:#d7ff45}.head a{font-size:13px}.title{font-family:Impact,'Arial Black',sans-serif;font-size:clamp(45px,6vw,90px);line-height:1;margin:35px 0}.title span{color:#d7ff45}.auth{max-width:540px;border:1px solid #41443d;background:#1d1f1b;padding:30px}.auth p{color:#b1b5aa;line-height:1.6}.auth label{font-size:12px;font-weight:800;display:block;margin-bottom:12px}input,select{padding:12px 14px;background:#181916;border:1px solid #51554a;color:#fff;min-height:42px;max-width:100%}input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid #d7ff45;outline-offset:2px}.auth input{width:100%}.btn{background:#d7ff45;color:#101111;border:0;padding:13px 19px;font-weight:900;font-size:13px}.auth .btn{margin-top:18px}.toolbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-bottom:20px}.toolbar select{min-width:180px}.toolbar input{flex:1;min-width:170px}.toolbar button{background:#282b25;border:1px solid #45493e;color:#fff;padding:12px 17px}.toolbar button:hover{border-color:#d7ff45}.stats{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:26px}.stat{border:1px solid #42463b;padding:15px 20px;min-width:120px}.stat strong{font-family:Impact,sans-serif;display:block;color:#d7ff45;font-size:29px}.stat span{color:#aab0a2;font-size:11px;letter-spacing:.12em;text-transform:uppercase}.list{display:grid;gap:12px}.item{border:1px solid #3a3e35;background:#1c1f1a;padding:22px;display:grid;grid-template-columns:1fr auto;gap:14px}.item h2{margin:0 0 8px;font-size:23px}.item small{color:#aaa;font-size:12px}.meta{display:flex;flex-wrap:wrap;gap:10px 24px;font-size:13px;color:#c9cabb;margin-top:14px}.meta span{display:inline-flex;gap:5px}.message{color:#bcbfb6;line-height:1.6;font-size:14px;white-space:pre-wrap;margin:20px 0 0}.item-actions{display:flex;align-items:start;gap:10px;flex-direction:column}.item-actions select{width:150px}.item-actions a{font-size:12px}.empty{border:1px dashed #515a43;padding:35px;color:#b7bcb3}.notice{margin:16px 0;color:#b6c59e;font-size:13px}.danger{color:#ffafaa}.hidden{display:none!important}@media(max-width:650px){.item{grid-template-columns:1fr}.item-actions{flex-direction:row;align-items:center;flex-wrap:wrap}.auth{padding:20px}.title{margin:25px 0}}
+</style></head><body>
+<header class="head"><div class="brand">DJ<span>SAMI</span> ✳ / ADMIN</div><a href="/">← Back to website</a></header>
+<main>
+<h1 class="title">BOOKING <span>REQUESTS.</span></h1>
+<section class="auth" id="loginSection" aria-label="Admin sign in">
+  <h2>Private booking dashboard</h2>
+  <p>Enter the admin token stored securely in your Cloudflare Pages environment settings. This is not a public customer password.</p>
+  <form id="loginForm"><label for="token">ADMIN TOKEN</label><input required type="password" id="token" autocomplete="off" minlength="24" placeholder="Paste admin token"><button class="btn" type="submit">OPEN DASHBOARD ↗</button></form>
+</section>
+<section class="hidden" id="dashboard" aria-label="Bookings overview">
+  <div class="stats" id="stats"></div>
+  <div class="toolbar"><select id="filter" aria-label="Filter status"><option value="">All statuses</option><option value="new">New</option><option value="contacted">Contacted</option><option value="confirmed">Confirmed</option><option value="declined">Declined</option></select><input id="search" placeholder="Search name, email, venue" aria-label="Search requests"><button type="button" id="refresh">↻ Refresh</button><button type="button" id="csv">↓ Export CSV</button><button type="button" id="logout">Log out</button></div>
+  <p class="notice" id="notice" role="status"></p><div class="list" id="list"></div>
+</section>
+</main>
+<script>
+(function(){
+'use strict';
+var token='',rows=[];
+var login=document.getElementById('loginSection'),dashboard=document.getElementById('dashboard'),notice=document.getElementById('notice'),list=document.getElementById('list');
+function el(tag,text,cls){var x=document.createElement(tag);if(text!==undefined)x.textContent=String(text);if(cls)x.className=cls;return x}
+function stateMessage(text){notice.textContent=text}
+function authHeaders(){return {'Authorization':'Bearer '+token,'Accept':'application/json'}}
+async function load(){
+ stateMessage('Loading requests…');
+ try{
+  var response=await fetch('/api/bookings',{headers:authHeaders(),cache:'no-store'});
+  var data=await response.json();
+  if(!response.ok)throw new Error(response.status===401?'Incorrect admin token.':'Bookings unavailable. Check D1 database and migration.');
+  rows=data.bookings||[];login.classList.add('hidden');dashboard.classList.remove('hidden');
+  stateMessage('Showing the latest '+rows.length+' requests (maximum 150).');render();
+ }catch(e){stateMessage(e.message);if(dashboard.classList.contains('hidden'))alert(e.message)}
+}
+function render(){
+ var status=document.getElementById('filter').value,query=document.getElementById('search').value.trim().toLowerCase();
+ var filtered=rows.filter(function(r){return (!status||r.status===status)&&(!query||[r.name,r.email,r.location,r.event_type,r.message].join(' ').toLowerCase().includes(query))});
+ var stats=document.getElementById('stats');stats.replaceChildren();
+ [['All',rows.length],['New',rows.filter(function(x){return x.status==='new'}).length],['Contacted',rows.filter(function(x){return x.status==='contacted'}).length],['Confirmed',rows.filter(function(x){return x.status==='confirmed'}).length]].forEach(function(x){var box=el('div',undefined,'stat');box.append(el('strong',x[1]),el('span',x[0]));stats.append(box)});
+ list.replaceChildren();
+ if(!filtered.length){list.append(el('div','No requests found.','empty'));return}
+ filtered.forEach(function(r){
+  var card=el('article',undefined,'item'),main=el('div'),actions=el('div',undefined,'item-actions');
+  main.append(el('h2',r.name),el('small','Received '+new Date(r.created_at).toLocaleString()));
+  var details=el('div',undefined,'meta');
+  [['Date',r.event_date],['Type',r.event_type],['Location',r.location],['Guests',r.guest_count||'—']].forEach(function(e){details.append(el('span',e[0]+': '+e[1]))});
+  main.append(details);
+  if(r.message)main.append(el('p',r.message,'message'));
+  var select=el('select');select.setAttribute('aria-label','Booking status for '+r.name);
+  ['new','contacted','confirmed','declined'].forEach(function(s){var op=el('option',s);op.value=s;op.selected=r.status===s;select.append(op)});
+  select.addEventListener('change',async function(){
+   select.disabled=true;
+   try{
+    var response=await fetch('/api/bookings',{method:'PATCH',headers:Object.assign(authHeaders(),{'Content-Type':'application/json'}),body:JSON.stringify({id:r.id,status:select.value})});
+    if(!response.ok)throw new Error('Update failed');
+    r.status=select.value;stateMessage('Saved status for '+r.name);render();
+   }catch(e){stateMessage(e.message);select.value=r.status;select.disabled=false}
+  });
+  var mail=el('a','Email customer ↗');mail.href='mailto:'+encodeURIComponent(r.email)+'?subject='+encodeURIComponent('DJ Sami booking enquiry — '+r.event_date);
+  actions.append(select,mail);card.append(main,actions);list.append(card);
+ });
+}
+document.getElementById('loginForm').addEventListener('submit',function(e){e.preventDefault();token=document.getElementById('token').value.trim();load()});
+document.getElementById('search').addEventListener('input',render);
+document.getElementById('filter').addEventListener('change',render);
+document.getElementById('refresh').addEventListener('click',load);
+document.getElementById('logout').addEventListener('click',function(){token='';rows=[];document.getElementById('token').value='';login.classList.remove('hidden');dashboard.classList.add('hidden')});
+document.getElementById('csv').addEventListener('click',function(){
+ var cols=['id','created_at','name','email','event_type','event_date','location','guest_count','message','status'];
+ function safe(value){var s=String(value??'');if(/^[=+\-@\t\r]/.test(s))s="'"+s;return '"'+s.replace(/"/g,'""')+'"'}
+ var output=[cols.join(',')].concat(rows.map(function(r){return cols.map(function(k){return safe(r[k])}).join(',')})).join('\r\n');
+ var blob=new Blob(['\ufeff',output],{type:'text/csv;charset=utf-8'});
+ var url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='dj-sami-bookings.csv';a.click();URL.revokeObjectURL(url);
+});
+})();
+</script></body></html>
