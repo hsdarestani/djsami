@@ -202,3 +202,10 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
  .footer-bottom>div{gap:15px}
 }
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}a,button{transition:none!important}}
+
+/* Very narrow iPhones: keep the logo and action within the header viewport. */
+@media(max-width:380px){
+ .header{gap:8px;padding:0 15px}
+ .wordmark{font-size:24px}
+ .header-book{padding:10px 12px;font-size:12px;white-space:nowrap;min-height:44px}
+}
